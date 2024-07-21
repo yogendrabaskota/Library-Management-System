@@ -16,6 +16,9 @@ const bookSchema = new mongoose.Schema ({
     },
     publishedAt  : {
         type : String
+    },
+    publication : {
+        type : String
     }
 })
 
