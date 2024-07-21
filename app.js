@@ -14,7 +14,6 @@ app.get("/",(req,res)=>{
 })
 
 app.post("/book",async(req,res)=>{
-    //console.log(req.body)
 /*   THis is long process, so i do with object destructuring:
     const bookName = req.body.bookName
     const bookPrice = req.body.bookPrice
@@ -39,8 +38,8 @@ app.post("/book",async(req,res)=>{
         // status : 201,
          message : "Book is Successfully added to database"
      })
- 
 })
+
 // all read
 app.get("/book",async(req,res)=>{
     const books = await Book.find()
@@ -67,9 +66,40 @@ app.get("/book/:id",async(req,res)=>{
            
         })
     }
-
- 
 })
+
+//Update
+app.patch("/book/:id",async(req,res) => {
+    const id = req.params.id
+    // const title = req.body.title
+    // const subTitle = req.body.subTitle
+    // const description = req.body.description
+    const { bookName,bookPrice,isbnNumber,authorName,publishedAt,publication } = req.body
+    await Book.findByIdAndUpdate(id,{
+        bookName,
+        bookPrice,
+        isbnNumber,
+        authorName,
+        publishedAt,
+        publication,       
+    })
+
+    res.status(200).json ({
+        message : "Book details updated successfully"
+
+    }) 
+})
+
+// Delete
+app.delete("/book/:id",async(req,res)=>{
+    const id = req.params.id
+    await Book.findByIdAndDelete(id) //delete the blog with entered API
+   
+    res.status(200).json({
+        message : "Book deleated successfully"
+    })
+})
+
 
 
 PORT = 2100
