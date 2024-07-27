@@ -91,14 +91,15 @@ app.patch("/book/:id",async(req,res) => {
 })
 
 // Delete
-app.delete("/book/:id",async(req,res)=>{
-    const id = req.params.id
-    await Book.findByIdAndDelete(id) //delete the blog with entered API
+
+// app.delete("/book/:id",async(req,res)=>{
+//     const id = req.params.id
+//     await Book.findByIdAndDelete(id) //delete the blog with entered API
    
-    res.status(200).json({
-        message : "Book deleated successfully"
-    })
-})
+//     res.status(200).json({
+//         message : "Book deleated successfully"
+//     })
+// })
 
 
 
