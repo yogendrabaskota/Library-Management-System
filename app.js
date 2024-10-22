@@ -14,16 +14,24 @@ app.get("/",(req,res)=>{
 })
 
 app.post("/book",async(req,res)=>{
-/*   THis is long process, so i do with object destructuring:
-    const bookName = req.body.bookName
-    const bookPrice = req.body.bookPrice
-    const isbnNumber = req.body.isbnNumber
-    const authorName = req.body.authorName
-    const publishedAt = req.body.publishedAt
-    const publication = req.body.publication  */
 
-// using object destructuring:
     const { bookName,bookPrice,isbnNumber,authorName,publishedAt,publication } = req.body
+
+    if(!bookName || !bookPrice || !isbnNumber || !authorName || !publication || !publishedAt){
+        return res.status(400).json({
+            message : "Please provide bookName,bookPrice,isbnNumber,authorName,publishedAt,publication"
+        })
+    }
+    
+
+    //const isMatched = await Book.find({bookName : bookName})
+    //console.log(isMatched)
+    
+    // if(isMatched.length !== 0){
+    //     return res.status(400).json({
+    //         message : "Book already exist"
+    //     })
+    // }
 
 // creating collection in DB:
     await Book.create ({
@@ -34,6 +42,7 @@ app.post("/book",async(req,res)=>{
         publishedAt,
         publication
     })
+   
     res.status(201).json({
         // status : 201,
          message : "Book is Successfully added to database"
@@ -71,12 +80,16 @@ app.get("/book/:id",async(req,res)=>{
 //Update
 app.patch("/book/:id",async(req,res) => {
     const id = req.params.id
-    // const title = req.body.title
-    // const subTitle = req.body.subTitle
-    // const description = req.body.description
-    const { bookName,bookPrice,isbnNumber,authorName,publishedAt,publication } = req.body
+
+    const { BookName,bookPrice,isbnNumber,authorName,publishedAt,publication } = req.body
+    if(!BookName || !bookPrice || !isbnNumber || !authorName || !publication || !publishedAt){
+        return res.status(400).json({
+            message : "Please provide bookName,bookPrice,isbnNumber,authorName,publishedAt,publication"
+        })
+    }
+  
     await Book.findByIdAndUpdate(id,{
-        bookName,
+        bookName : BookName,
         bookPrice,
         isbnNumber,
         authorName,
@@ -90,20 +103,20 @@ app.patch("/book/:id",async(req,res) => {
     }) 
 })
 
-// Delete
+//Delete
 
-// app.delete("/book/:id",async(req,res)=>{
-//     const id = req.params.id
-//     await Book.findByIdAndDelete(id) //delete the blog with entered API
+app.delete("/book/:id",async(req,res)=>{
+    const id = req.params.id
+    await Book.findByIdAndDelete(id) //delete the blog with entered API
    
-//     res.status(200).json({
-//         message : "Book deleated successfully"
-//     })
-// })
+    res.status(200).json({
+        message : "Book deleated successfully"
+    })
+})
 
 
 
 //PORT = 2100
-app.listen(2000, ()=>{
-    console.log("NodeJs has started at port 2000")
+app.listen(3000, ()=>{
+    console.log("Port has started at port 2000")
 })
