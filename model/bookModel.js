@@ -18,6 +18,10 @@ const bookSchema = new Schema ({
     },
     publication : {
         type : String
+    },
+    userId : {
+        type : mongoose.Types.ObjectId,
+        ref : 'User'
     }
 })
 

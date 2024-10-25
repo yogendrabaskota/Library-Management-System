@@ -2,6 +2,7 @@ const Book = require("../model/bookModel")
 
 
 exports.AddBook =async(req,res)=>{
+    const userId = req.user.id
 
 
 
@@ -25,12 +26,14 @@ exports.AddBook =async(req,res)=>{
     
     // creating collection in DB:
         await Book.create ({
+            userId,
             bookName,
             bookPrice,
             isbnNumber,
             authorName,
             publishedAt,
-            publication
+            publication,
+
         })
        
         res.status(201).json({
@@ -74,7 +77,8 @@ exports.getSingleBook = async(req,res)=>{
 
 
 exports.updateBook = async(req,res) => {
-    const id = req.params.id
+    const { id} = req.params
+    const userId = req.user.id
 
     const { BookName,bookPrice,isbnNumber,authorName,publishedAt,publication } = req.body
     if(!BookName || !bookPrice || !isbnNumber || !authorName || !publication || !publishedAt){
@@ -83,19 +87,44 @@ exports.updateBook = async(req,res) => {
         })
     }
   
-    await Book.findByIdAndUpdate(id,{
-        bookName : BookName,
-        bookPrice,
-        isbnNumber,
-        authorName,
-        publishedAt,
-        publication,       
-    })
+    const oldDatas = await Book.findById(id).populate('userId','-password')
+    if(!oldDatas){
+        return res.status(400).json({
+            message : "Book not found"
+        })
+    }
+    if(!oldDatas.userId){
+        return res.status(400).json({
+            message : "User Information Not found"
+        })
+    }
+    if(oldDatas.userId.equals(userId)){
+        
+    
 
-    res.status(200).json ({
-        message : "Book details updated successfully"
 
-    }) 
+        await Book.findByIdAndUpdate(id,{
+            bookName : BookName,
+            bookPrice,
+            isbnNumber,
+            authorName,
+            publishedAt,
+            publication,       
+        },{
+            new:true
+        })
+        res.status(200).json ({
+            message : "Book details updated successfully"
+            
+        }) 
+    }else{
+        return res.status(400).json({
+            message : "You are not the author"
+        })
+    }
+
+   
+    
 }
 
 exports.deleteBook = async(req,res)=>{

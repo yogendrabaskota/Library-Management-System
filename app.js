@@ -28,5 +28,5 @@ app.use("/api",authRoute)
 
 //PORT = 3000
 app.listen(3000, ()=>{
-    console.log("Port has started at port 2000")
+    console.log("Port has started at port 3000")
 })
