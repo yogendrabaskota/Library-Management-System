@@ -153,7 +153,6 @@ exports.deleteBook = async(req,res)=>{
         }
         // check the correct author(who added the book) of book so that you cannot delete the book added by others
         if(oldDatas.userId.equals(userId)) {
-            // Update the note
             await Book.findByIdAndDelete(id);
 
             return res.status(200).json({
@@ -164,4 +163,31 @@ exports.deleteBook = async(req,res)=>{
                 message: "You are not the author"
             });
         }
+}
+
+exports.getMyBook=async(req,res)=>{
+    
+    const userId = req.user.id
+   console.log("userid",userId)
+   //console.log("id",id)
+    if(!userId){
+        return res.status(400).json({
+            message : "Can't get userId"
+        })
+    }
+    const myBooks = await Book.find({ userId: userId })//.populate('userId','-userPassword');
+    if (!myBooks || myBooks.length === 0) {
+        return res.status(404).json({
+            message: "No books found for this user"
+        });
+    }
+
+    console.log(myBooks)
+    res.status(200).json({
+        message : "Your Books fetched successfukky",
+        myBooks
+    })
+    
+    
+
 }
