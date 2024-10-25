@@ -98,11 +98,9 @@ exports.updateBook = async(req,res) => {
             message : "User Information Not found"
         })
     }
+    // check the correct author of book( only the person who added the book can update it)
     if(oldDatas.userId.equals(userId)){
         
-    
-
-
         await Book.findByIdAndUpdate(id,{
             bookName : BookName,
             bookPrice,
@@ -127,11 +125,43 @@ exports.updateBook = async(req,res) => {
     
 }
 
-exports.deleteBook = async(req,res)=>{
-    const id = req.params.id
-    await Book.findByIdAndDelete(id) //delete the blog with entered API
+// exports.deleteBook = async(req,res)=>{
+//     const id = req.params.id
+
+//     await Book.findByIdAndDelete(id) //delete the blog with entered API
    
-    res.status(200).json({
-        message : "Book deleated successfully"
-    })
+//     res.status(200).json({
+//         message : "Book deleated successfully"
+//     })
+// }
+
+
+
+exports.deleteBook = async(req,res)=>{
+    const {id} = req.params
+    const userId = req.user.id
+    if(!id){
+        return res.status(400).json({
+            message : "Please provide id of the book you want to delete"
+        })
+    }
+    const oldDatas = await Book.findById(id).populate('userId','-userPassword');
+        if (!oldDatas) {
+            return res.status(404).json({
+                message: "Book not found"
+            });
+        }
+        // check the correct author(who added the book) of book so that you cannot delete the book added by others
+        if(oldDatas.userId.equals(userId)) {
+            // Update the note
+            await Book.findByIdAndDelete(id);
+
+            return res.status(200).json({
+                message: "Book deleted Successfully"
+            });
+        } else {
+            return res.status(403).json({
+                message: "You are not the author"
+            });
+        }
 }
