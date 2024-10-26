@@ -26,7 +26,7 @@ app.use("/api",bookRoute)
 app.use("/api",authRoute)
 
 
-//PORT = 3000
-app.listen(3000, ()=>{
-    console.log("Port has started at port 3000")
+const PORT = process.env.PORT
+app.listen(PORT, ()=>{
+    console.log(`Port has started at port ${PORT}`)
 })
